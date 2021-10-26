@@ -7,7 +7,13 @@ public class HammerGrabNetwork : MonoBehaviour
     public delegate void GrabHammer();
     public GrabHammer grabHammer;
 
+    public delegate void UseHelmet();
+    public UseHelmet useHelmet;
+    public delegate void EndJob();
+    public EndJob endjob;
 
+
+    float timer, timeend;
     [ContextMenu("hammer set")]
     public void HammerAttached()
     {
@@ -15,6 +21,24 @@ public class HammerGrabNetwork : MonoBehaviour
         grabHammer.Invoke();
     }
 
- 
-    
+    [ContextMenu("set hammer")]
+    public void WearHelmet()
+    {
+        NetworkSingleton.instance.UsedHelmet = true;
+        useHelmet.Invoke();
+    }
+
+    public void Start()
+    {
+        timer = Time.time;
+    }
+
+
+    public void Endjob()
+    {
+        timer = Mathf.Abs(timer - Time.time);
+        NetworkSingleton.instance.Endtime = timer;
+        endjob.Invoke();
+    }
+
 }

@@ -48,7 +48,7 @@ public class NetworkSingleton : MonoBehaviour
         get { return player.timesHammer; }
         set { player.timesHammer= value; }
     }
-    public int UsedHelmet
+    public bool UsedHelmet
     {
         get
         {

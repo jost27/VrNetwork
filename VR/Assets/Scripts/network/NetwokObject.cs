@@ -7,6 +7,6 @@ public class NetwokObject
     public string name;
     public int id;
     public int timesHammer;
-    public int helmetused;
+    public bool helmetused;
     public float endTime;
 }
