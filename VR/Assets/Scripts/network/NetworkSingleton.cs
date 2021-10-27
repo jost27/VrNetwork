@@ -8,8 +8,7 @@ public class NetworkSingleton : MonoBehaviour
     [SerializeField]
     NetwokObject player;
     [SerializeField]
-      string URL;
-    
+      string URL;    
     
 
     private void Awake()
@@ -27,16 +26,12 @@ public class NetworkSingleton : MonoBehaviour
     public string URLNET
     {
         get { return URL; }   // get method
-        set { URL = value; }  // set method
     }
     // Player Parameters
     public string PlayerName
     {
         get { return player.name; }
-        set
-        {
-            player.name = value;
-        }
+        set{player.name = value;}
     }
     public int IDClient
     {

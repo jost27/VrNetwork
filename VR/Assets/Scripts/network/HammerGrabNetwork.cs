@@ -13,7 +13,7 @@ public class HammerGrabNetwork : MonoBehaviour
     public EndJob endjob;
 
 
-    float timer, timeend;
+    float timer;
     [ContextMenu("hammer set")]
     public void HammerAttached()
     {

@@ -7,9 +7,9 @@ using LitJson;
 
 public class NetworkManager : MonoBehaviour
 {
-    private int actualid;
+    
     [SerializeField]
-    string dato;
+    string dato;  // solo prueba de campo
     [SerializeField]
     HammerGrabNetwork hammer;
 
@@ -28,7 +28,9 @@ public class NetworkManager : MonoBehaviour
     {
         WWWForm form = new WWWForm();
         form.AddField("nombre", dato);
-        StartCoroutine(Register(form));
+        string url = NetworkSingleton.instance.URLNET+"/connect.php";
+        StartCoroutine(SendDataPost(form,url));
+        StartCoroutine(GetID(form));
     }
 
     [ContextMenu("get all data")]
@@ -41,31 +43,8 @@ public class NetworkManager : MonoBehaviour
         
         StartCoroutine(Getall(form));
     }
-    /// <summary>
-    /// register the new client in the data base and get the ID singleton player 
-    /// </summary>
-    /// <param name="form"></param>
-    /// <returns></returns>
-    IEnumerator Register(WWWForm form)
-    {
-        string url = NetworkSingleton.instance.URLNET;
-        url += "/connect.php";
-        Debug.Log(url);
-        UnityWebRequest www = UnityWebRequest.Post(url,form);//URl
-        yield return www.SendWebRequest();
-
-        if (www.result != UnityWebRequest.Result.Success)
-        {
-            Debug.LogError(www.error);
-        }
-        else
-        {
-            Debug.Log(www.downloadHandler.text);
-
-            StartCoroutine(GetID(form));
-        }
-
-    }
+ 
+  
     /// <summary>
     /// get the ID player using the name, take care the name must be unic
     /// </summary>
@@ -85,7 +64,7 @@ public class NetworkManager : MonoBehaviour
         }
         else
         {
-            Debug.Log(www.downloadHandler.text);
+            //Debug.Log(www.downloadHandler.text);
             string data = www.downloadHandler.text;
             int id = int.Parse(data);
             NetworkSingleton.instance.IDClient = id;// guarda en el singleton la ID del cliente 
@@ -95,7 +74,62 @@ public class NetworkManager : MonoBehaviour
 
 
 
+    public void SetHelmetdata()
+    {
+        WWWForm form = new WWWForm();
+        form.AddField("id", NetworkSingleton.instance.IDClient);
+        int usehelmet = NetworkSingleton.instance.UsedHelmet == true ? 1 : 0;
+        form.AddField("usehelmet", usehelmet);
+        string url = NetworkSingleton.instance.URLNET + "/sethelmet.php";
+        StartCoroutine(SendDataPost(form, url));
+    }
+   
 
+    public void Sethammerdata()
+    {
+        WWWForm form = new WWWForm();
+        form.AddField("id", NetworkSingleton.instance.IDClient);
+        form.AddField("hammer", NetworkSingleton.instance.AttachedHammer);
+        string url = NetworkSingleton.instance.URLNET + "/sethammer.php";
+        StartCoroutine(SendDataPost(form,url));
+    }
+
+
+    public void SetTimedata()
+    {
+        WWWForm form = new WWWForm();
+        form.AddField("id", NetworkSingleton.instance.IDClient);
+        form.AddField("time", NetworkSingleton.instance.Endtime.ToString()); ;
+        string url = NetworkSingleton.instance.URLNET+ "/settimer.php";
+        StartCoroutine(SendDataPost(form,url));
+        
+    }
+
+    /// <summary>
+    /// Send data into the API with post method
+    /// </summary>
+    /// <param name="form"></param>
+    
+    IEnumerator SendDataPost(WWWForm form,string url)
+    {
+        UnityWebRequest www = UnityWebRequest.Post(url, form);//URl
+        yield return www.SendWebRequest();
+
+        if (www.result != UnityWebRequest.Result.Success)
+        {
+            Debug.LogError(www.error);
+        }
+        else
+        {
+            Debug.Log(www.downloadHandler.text);
+
+        }
+    }
+    /// <summary>
+    /// get data form the API
+    /// </summary>
+    /// <param name="form"></param>
+    /// <returns>all data in the singleton player class</returns>
     IEnumerator Getall(WWWForm form)
     {
         string url = NetworkSingleton.instance.URLNET;
@@ -110,112 +144,16 @@ public class NetworkManager : MonoBehaviour
         }
         else
         {
-            Debug.Log(www.downloadHandler.text);
+            //Debug.Log(www.downloadHandler.text);
+            //decode json Data
             JsonData jsonData = JsonMapper.ToObject(www.downloadHandler.text);
             NetworkSingleton.instance.PlayerName = jsonData["User"].ToString();
             //NetworkSingleton.instance.IDClient =(int) jsonData["ID"];
-            NetworkSingleton.instance.AttachedHammer =int.Parse( jsonData["GrabTimesHammer"].ToString());
-            NetworkSingleton.instance.UsedHelmet = (int.Parse(jsonData["UseHelmet"].ToString())>=1)?true:false;
-            NetworkSingleton.instance.Endtime =float.Parse(
-                jsonData["finishTime"].ToString());
+            NetworkSingleton.instance.AttachedHammer = int.Parse(jsonData["GrabTimesHammer"].ToString());
+            NetworkSingleton.instance.UsedHelmet = (int.Parse(jsonData["UseHelmet"].ToString()) >= 1) ? true : false;
+            NetworkSingleton.instance.Endtime = float.Parse(jsonData["finishTime"].ToString());
 
         }
 
     }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="form"></param>
-    /// <returns></returns>
-
-
-
-    public void SetHelmetdata()
-    {
-        WWWForm form = new WWWForm();
-        form.AddField("id", NetworkSingleton.instance.IDClient);
-        int usehelmet = NetworkSingleton.instance.UsedHelmet == true ? 1 : 0;
-        form.AddField("usehelmet", usehelmet);
-        StartCoroutine(Posthelmet(form));
-    }
-    IEnumerator Posthelmet(WWWForm form)
-    {
-        string url = NetworkSingleton.instance.URLNET;
-        url += "/sethelmet.php";
-
-        UnityWebRequest www = UnityWebRequest.Post(url, form);//URl
-        yield return www.SendWebRequest();
-
-        if (www.result != UnityWebRequest.Result.Success)
-        {
-            Debug.LogError(www.error);
-        }
-        else
-        {
-            Debug.Log(www.downloadHandler.text);
-
-        }
-
-    }
-
-    public void Sethammerdata()
-    {
-        WWWForm form = new WWWForm();
-        form.AddField("id", NetworkSingleton.instance.IDClient);
-        form.AddField("hammer", NetworkSingleton.instance.AttachedHammer);
-        StartCoroutine(Posthammer(form));
-    }
-
-
-    IEnumerator Posthammer(WWWForm form)
-    {
-        string url = NetworkSingleton.instance.URLNET;
-        url += "/sethammer.php";
-        Debug.Log(url);
-        UnityWebRequest www = UnityWebRequest.Post(url, form);//URl
-        yield return www.SendWebRequest();
-
-        if (www.result != UnityWebRequest.Result.Success)
-        {
-            Debug.LogError(www.error);
-        }
-        else
-        {
-            Debug.Log(www.downloadHandler.text);
-        }
-    }
-
-
-
-    public void SetTimedata()
-    {
-        WWWForm form = new WWWForm();
-        form.AddField("id", NetworkSingleton.instance.IDClient);
-        form.AddField("time", NetworkSingleton.instance.Endtime.ToString()); ;
-        StartCoroutine(TimmerEnd(form));
-    }
-
-
-    IEnumerator TimmerEnd(WWWForm form)
-    {
-        string url = NetworkSingleton.instance.URLNET;
-        url += "/settimer.php";
-        Debug.Log(url);
-        UnityWebRequest www = UnityWebRequest.Post(url, form);//URl
-        yield return www.SendWebRequest();
-
-        if (www.result != UnityWebRequest.Result.Success)
-        {
-            Debug.LogError(www.error);
-        }
-        else
-        {
-            Debug.Log(www.downloadHandler.text);
-
-        }
-
-    }
-
-
 }
