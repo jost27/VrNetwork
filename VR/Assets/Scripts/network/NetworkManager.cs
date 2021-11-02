@@ -11,15 +11,49 @@ public class NetworkManager : MonoBehaviour
     [SerializeField]
     string dato;  // solo prueba de campo
     [SerializeField]
-    HammerGrabNetwork hammer;
+    GrabNetwork _grabnetwork;
 
    
     
     private void Start()
     {
-        hammer.grabHammer += Sethammerdata;// event grab hammer perfomed
-        hammer.useHelmet += SetHelmetdata;
-        hammer.endjob += SetTimedata;
+        _grabnetwork.grabHammer += Sethammerdata;// event grab hammer perfomed
+        _grabnetwork.useHelmet += SetHelmetdata;
+        _grabnetwork.endjob += SetTimedata;
+        //ConnectionState();
+        InvokeRepeating("ConnectionState", 1, 20);
+
+    }
+
+    void ConnectionState()
+    {
+        StartCoroutine(Connectionstate());
+    }
+
+
+
+
+    IEnumerator Connectionstate()
+    {
+        string url = NetworkSingleton.instance.URLNET;
+        url += "/connectstate.php";
+        
+        UnityWebRequest www = UnityWebRequest.Get(url);//URl
+        yield return www.SendWebRequest();
+
+        if (www.result != UnityWebRequest.Result.Success)
+        {
+            Debug.LogError(www.error);
+            NetworkSingleton.instance.connection =false;
+        }
+        else
+        {
+            //Debug.Log(www.downloadHandler.text);
+            string data = www.downloadHandler.text;
+            bool conn = int.Parse(data)==1;
+            NetworkSingleton.instance.connection = conn;
+        }
+
     }
 
     [ContextMenu("send data")]
@@ -45,6 +79,8 @@ public class NetworkManager : MonoBehaviour
     }
  
   
+
+
     /// <summary>
     /// get the ID player using the name, take care the name must be unic
     /// </summary>
@@ -156,4 +192,6 @@ public class NetworkManager : MonoBehaviour
         }
 
     }
+
+
 }

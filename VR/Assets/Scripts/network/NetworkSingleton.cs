@@ -5,6 +5,7 @@ using UnityEngine;
 public class NetworkSingleton : MonoBehaviour
 {
     public static NetworkSingleton instance;
+    public bool connection; 
     [SerializeField]
     NetwokObject player;
     [SerializeField]

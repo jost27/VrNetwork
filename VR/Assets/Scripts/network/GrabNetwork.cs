@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HammerGrabNetwork : MonoBehaviour
+public class GrabNetwork : MonoBehaviour
 {
     public delegate void GrabHammer();
     public GrabHammer grabHammer;

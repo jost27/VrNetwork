@@ -237,7 +237,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dato: lili
-  hammer: {fileID: 847581167}
+  _grabnetwork: {fileID: 847581167}
 --- !u!114 &716085736
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -250,6 +250,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99caaf48d80c1dd489e91e099c900ea4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  connection: 0
   player:
     name: 
     id: 0
