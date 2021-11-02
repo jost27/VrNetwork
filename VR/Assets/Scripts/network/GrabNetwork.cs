@@ -14,6 +14,11 @@ public class GrabNetwork : MonoBehaviour
 
 
     float timer;
+
+    public void Start()
+    {
+        timer = Time.time;
+    }
     [ContextMenu("hammer set")]
     public void HammerAttached()
     {
@@ -28,12 +33,9 @@ public class GrabNetwork : MonoBehaviour
         useHelmet.Invoke();
     }
 
-    public void Start()
-    {
-        timer = Time.time;
-    }
+   
 
-
+    [ContextMenu("terminar")]
     public void Endjob()
     {
         timer = Mathf.Abs(timer - Time.time);

@@ -9,7 +9,7 @@ public class NetworkSingleton : MonoBehaviour
     [SerializeField]
     NetwokObject player;
     [SerializeField]
-      string URL;    
+      string URL= "localhost:8080/unityweb/php";    
     
 
     private void Awake()

@@ -7,21 +7,23 @@ using LitJson;
 
 public class NetworkManager : MonoBehaviour
 {
-    
+    [Tooltip("nombre del usuario")]
     [SerializeField]
     string dato;  // solo prueba de campo
     [SerializeField]
     GrabNetwork _grabnetwork;
 
+  
    
     
     private void Start()
     {
+        InvokeRepeating("ConnectionState", 1, 20);
         _grabnetwork.grabHammer += Sethammerdata;// event grab hammer perfomed
         _grabnetwork.useHelmet += SetHelmetdata;
         _grabnetwork.endjob += SetTimedata;
         //ConnectionState();
-        InvokeRepeating("ConnectionState", 1, 20);
+        
 
     }
 
@@ -138,6 +140,7 @@ public class NetworkManager : MonoBehaviour
         form.AddField("time", NetworkSingleton.instance.Endtime.ToString()); ;
         string url = NetworkSingleton.instance.URLNET+ "/settimer.php";
         StartCoroutine(SendDataPost(form,url));
+
         
     }
 
